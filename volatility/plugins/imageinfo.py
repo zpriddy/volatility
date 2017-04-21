@@ -127,14 +127,13 @@ class ImageInfo(kdbgscan.KDBGScan):
                        timefmt.display_datetime(data['ImageDatetime'].as_datetime(), data['ImageTz']))
 
         if sp is not None:
-            if 'SP2' not in suggestion and 'SP3' not in suggestion:
-                yield ('Suggested Profile(s)', str, suggestion)
-                pass
-            else:
+            if 'SP1' in suggestion or 'SP3' in suggestion or 'SP2' in suggestion:
                 sp = 'SP%s' % sp
                 sps = suggestion.split(',')
-                right_sp = [x for x in sps if sp in x][0]
+                right_sp = [x for x in sps if sp in x]
                 yield ('Suggested Profile(s)', str, right_sp)
+            else:
+                yield ('Suggested Profile(s)', str, suggestion)
         else:
             yield ('Suggested Profile(s)', str, suggestion)
 
