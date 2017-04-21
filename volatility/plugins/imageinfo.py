@@ -131,7 +131,7 @@ class ImageInfo(kdbgscan.KDBGScan):
                 sp = 'SP%s' % sp
                 sps = suggestion.split(',')
                 right_sp = [x for x in sps if sp in x]
-                yield ('Suggested Profile(s)', str, str(right_sp)[1:-1])
+                yield ('Suggested Profile(s)', str, str(right_sp)[1:-1].replace('\'',''))
             else:
                 yield ('Suggested Profile(s)', str, suggestion)
         else:
