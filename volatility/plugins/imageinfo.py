@@ -80,7 +80,9 @@ class ImageInfo(kdbgscan.KDBGScan):
                 suggestion = 'No suggestion'
             suggestion += ' (Instantiated with ' + chosen + ')'
 
-        yield ('Suggested Profile(s)', str, suggestion)
+
+        #yield ('Suggested Profile(s)', str, suggestion)
+        sp = None
 
         tmpas = addr_space
         count = 0
@@ -107,6 +109,7 @@ class ImageInfo(kdbgscan.KDBGScan):
                 yield ('KDBG', Address, Address(kdbg.obj_offset))
                 kpcr_list = list(kdbg.kpcrs())
                 yield ('Number of Processors', int, len(kpcr_list))
+                sp = kdbg.ServicePack
                 yield ('Image Type (Service Pack)', int, kdbg.ServicePack)
                 for kpcr in kpcr_list:
                     yield ('KPCR for CPU {0}'.format(kpcr.ProcessorBlock.Number),
@@ -122,6 +125,18 @@ class ImageInfo(kdbgscan.KDBGScan):
                 yield ('Image date and time', str, str(data['ImageDatetime']))
                 yield ('Image local date and time', str,
                        timefmt.display_datetime(data['ImageDatetime'].as_datetime(), data['ImageTz']))
+
+        if sp is not None:
+            if 'SP2' not in suggestion and 'SP3' not in suggestion:
+                yield ('Suggested Profile(s)', str, suggestion)
+                pass
+            else:
+                sp = 'SP%s' % sp
+                sps = suggestion.split(',')
+                right_sp = [x for x in sps if sp in x][0]
+                yield ('Suggested Profile(s)', str, right_sp)
+        else:
+            yield ('Suggested Profile(s)', str, suggestion)
 
         # Make sure to reset the profile to its original value to keep the invalidator from blocking the cache
         self._config.update('PROFILE', origprofile)
